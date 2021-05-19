@@ -1,8 +1,11 @@
 package it.polito.tdp.borders.model;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -15,9 +18,11 @@ public class Model {
 	
 	private Graph<Country, DefaultEdge> graph ;
 	private Map<Integer,Country> countriesMap ;
+	private Simulatore sim;
 	
 	public Model() {
 		this.countriesMap = new HashMap<>() ;
+		this.sim = new Simulatore();
 
 	}
 	
@@ -40,6 +45,49 @@ public class Model {
 		}
 	}
 	
+	public List<CountryAndNumber> getCountryAndNumbers(){
+		List<CountryAndNumber> result = new LinkedList<>();
+		
+		for(Country c: this.graph.vertexSet()) {
+			result.add(new CountryAndNumber(c, this.graph.degreeOf(c)));
+		}
+		
+		Collections.sort(result);
+		return result;
+	}
 	
+	public void Simula(Country partenza) {
+		if(graph!= null) {
+			sim.init(partenza, graph);
+			sim.run();
+		}
+	}
+	
+	
+	public Integer getT() {
+		return sim.getT();
+	}
+	
+	public List<CountryAndNumber> getStanziali() {
+		Map<Country, Integer> s = sim.getStanziali();
+		List<CountryAndNumber> result = new LinkedList<>();
+		
+		for(Country c: s.keySet()) {
+			if(s.get(c) > 0) {
+				CountryAndNumber cn = new CountryAndNumber(c, s.get(c));
+				result.add(cn);
+			}
+		}
+		
+		Collections.sort(result);
+		return result;
+	}
+
+	public Set<Country> getCountries() {
+		if(this.graph != null) {
+			return this.graph.vertexSet();
+		}
+		return null;
+	}
 
 }
