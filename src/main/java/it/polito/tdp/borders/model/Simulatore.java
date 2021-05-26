@@ -45,11 +45,13 @@ public class Simulatore {
 		Evento e;
 		
 		while((e = this.queue.poll()) != null) {
+			this.T = e.getT();
 			int nPersone = e.getN();
 			Country stato = e.getCountry();
 			
 			List<Country> vicini = Graphs.neighborListOf(grafo, stato);
 			int migrantiPerStato = (nPersone/2)/vicini.size();// troncamento per difetto
+			
 			if(migrantiPerStato > 0) {
 				for(Country confinante: vicini) {
 					this.queue.add(new Evento(e.getT()+1, confinante, migrantiPerStato));
